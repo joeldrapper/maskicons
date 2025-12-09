@@ -1,7 +1,7 @@
 {
 	"name": "maskicons",
 	"version": "0.0.3",
-	"description": "Tailwind CSS utilities for icon sets",
+	"description": "Icons as Tailwind utilities.",
 	"type": "module",
 	"main": "dist/index.css",
 	"exports": {
