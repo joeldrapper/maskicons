@@ -1,0 +1,23 @@
+{
+	"name": "maskicons",
+	"version": "0.0.2",
+	"description": "Tailwind CSS utilities for icon sets",
+	"type": "module",
+	"main": "dist/index.css",
+	"exports": {
+		".": "./dist/index.css",
+		"./utilities": "./dist/utilities.css",
+		"./tabler": "./dist/tabler.css"
+	},
+	"files": [
+		"dist",
+		"licenses"
+	],
+	"scripts": {
+		"build": "bun run src/build.ts"
+	},
+	"devDependencies": {
+		"@types/bun": "^1.3.4",
+		"svgo": "^4.0.0"
+	}
+}
