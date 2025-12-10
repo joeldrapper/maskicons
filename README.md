@@ -83,6 +83,10 @@ Any text inside the icon element is visually hidden but remains accessible to sc
 
 The icon utilities use `:where` selectors so they have the lowest precedence. This is why all other utilities such as `size-*` will override the defaults.
 
+## Payload
+
+The Tabler icons are ~687 bytes on average and the Bootstrap icons are ~914 bytes on average. They should compress well due to the duplicated rules. And Tailwind only includes the icons you actually use.
+
 ## License
 
 - MIT © Joel Drapper
