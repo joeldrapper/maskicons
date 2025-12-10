@@ -36,11 +36,13 @@ function optimizeSvg(svgContent: string): string {
 function svgToDataUri(svgContent: string): string {
 	// Optimize SVG and remove width/height attributes
 	const optimized = optimizeSvg(svgContent)
-	// Normalize whitespace and encode for use in CSS
+	// Normalize whitespace and apply minimal encoding for CSS url()
 	const normalized = optimized.replace(/\s+/g, " ").trim()
-	const encoded = encodeURIComponent(normalized)
+	// Only encode characters that are problematic in CSS url(): #, <, >, and "
+	// Use single quotes for attributes to avoid needing to encode double quotes
+	const encoded = normalized.replace(/"/g, "'").replace(/#/g, "%23").replace(/</g, "%3c").replace(/>/g, "%3e")
 
-	return `data:image/svg+xml,${encoded}`
+	return `data:image/svg+xml;charset=UTF-8,${encoded}`
 }
 
 function iconNameFromPath(filePath: string, baseDir: string): string {
