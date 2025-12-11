@@ -7,8 +7,11 @@
 	"exports": {
 		".": "./dist/index.css",
 		"./utilities": "./dist/utilities.css",
-		"./tabler": "./dist/tabler.css",
-		"./bootstrap": "./dist/bootstrap.css"
+		"./tabler-outline": "./dist/tabler-outline.css",
+		"./tabler-filled": "./dist/tabler-filled.css",
+		"./bootstrap": "./dist/bootstrap.css",
+		"./flags": "./dist/flags.css",
+		"./flags-square": "./dist/flags-square.css"
 	},
 	"files": [
 		"dist",

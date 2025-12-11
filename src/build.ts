@@ -9,14 +9,39 @@ const DIST_DIR = path.join(SRC_DIR, "../dist")
 
 const ICON_SETS: IconSetConfig[] = [
 	{
-		name: "tabler",
-		directory: path.join(ICONS_DIR, "tabler"),
+		name: "tabler-outline",
+		directory: path.join(ICONS_DIR, "tabler/outline"),
 		prefix: "tabler",
+		suffix: "outline",
+		aspectRatio: "1 / 1",
+	},
+	{
+		name: "tabler-filled",
+		directory: path.join(ICONS_DIR, "tabler/filled"),
+		prefix: "tabler",
+		suffix: "filled",
+		aspectRatio: "1 / 1",
 	},
 	{
 		name: "bootstrap",
 		directory: path.join(ICONS_DIR, "bootstrap"),
 		prefix: "bootstrap",
+		aspectRatio: "1 / 1",
+	},
+	{
+		name: "flags",
+		directory: path.join(ICONS_DIR, "flags/4x3"),
+		prefix: "flag",
+		colored: true,
+		aspectRatio: "4 / 3",
+	},
+	{
+		name: "flags-square",
+		directory: path.join(ICONS_DIR, "flags/1x1"),
+		prefix: "flag",
+		suffix: "square",
+		colored: true,
+		aspectRatio: "1 / 1",
 	},
 ]
 
@@ -24,6 +49,9 @@ interface IconSetConfig {
 	name: string
 	directory: string
 	prefix: string
+	suffix?: string
+	colored?: boolean
+	aspectRatio: string
 }
 
 function optimizeSvg(svgContent: string): string {
@@ -51,12 +79,27 @@ function iconNameFromPath(filePath: string, baseDir: string): string {
 	return parts.join("-").toLowerCase()
 }
 
-function generateUtility(prefix: string, iconName: string, svgContent: string): string {
+function generateUtility(prefix: string, iconName: string, svgContent: string, config: IconSetConfig): string {
 	const dataUri = svgToDataUri(svgContent)
+	const utilityName = [prefix, iconName, config.suffix].filter(Boolean).join("-")
 
-	return `@utility ${prefix}-${iconName} {
+	if (config.colored) {
+		return `@utility ${utilityName} {
   :where(&) {
-    @apply inline-block size-[1em] overflow-hidden align-[-0.125em] select-none cursor-default;
+    @apply inline-block overflow-hidden align-[-0.125em] select-none cursor-default;
+    height: 1em;
+    aspect-ratio: ${config.aspectRatio};
+    background: url("${dataUri}") center / contain no-repeat;
+  }
+}
+`
+	}
+
+	return `@utility ${utilityName} {
+  :where(&) {
+    @apply inline-block overflow-hidden align-[-0.125em] select-none cursor-default;
+    height: 1em;
+    aspect-ratio: ${config.aspectRatio};
     color: var(--icon-color, currentColor);
     background: var(--icon-color, currentColor);
     mask: url("${dataUri}") center / contain no-repeat;
@@ -89,12 +132,12 @@ async function buildIconSet(config: IconSetConfig): Promise<number> {
 			const file = Bun.file(filePath)
 			const svgContent = await file.text()
 			const iconName = iconNameFromPath(filePath, config.directory)
-			return generateUtility(config.prefix, iconName, svgContent)
+			return generateUtility(config.prefix, iconName, svgContent, config)
 		}),
 	)
 
-	const imports = ['@import "./utilities.css";']
-	const output = imports.join("\n") + "\n\n" + utilities.join("\n")
+	const imports = config.colored ? [] : ['@import "./utilities.css";']
+	const output = (imports.length ? imports.join("\n") + "\n\n" : "") + utilities.join("\n")
 	const outputFile = path.join(DIST_DIR, `${config.name}.css`)
 	await Bun.write(outputFile, output)
 
