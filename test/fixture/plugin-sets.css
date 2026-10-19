@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@plugin "maskicons/tabler-outline";
+@plugin "maskicons/tabler-filled";
+@plugin "maskicons/bootstrap";
+@plugin "maskicons/flags";
+@plugin "maskicons/flags-square";
