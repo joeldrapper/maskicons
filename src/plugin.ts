@@ -1,6 +1,6 @@
 import { closeSync, openSync, readFileSync, readSync } from "node:fs"
 import type createPlugin from "tailwindcss/plugin"
-import { ICON_SETS, type IconSet } from "./sets"
+import { ICON_SETS, type IconSet } from "./sets.ts"
 
 type PluginAPI = Parameters<Parameters<typeof createPlugin>[0]>[0]
 

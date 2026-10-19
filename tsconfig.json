@@ -1,17 +1,17 @@
 {
 	"compilerOptions": {
 		"target": "ESNext",
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"strict": true,
-		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
 		"noEmit": true,
-		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"allowImportingTsExtensions": true,
-		"types": ["bun-types"]
+		"verbatimModuleSyntax": true,
+		"erasableSyntaxOnly": true,
+		"rewriteRelativeImportExtensions": true,
+		"types": ["node"]
 	},
 	"include": ["src", "test"],
 	"exclude": ["node_modules"]

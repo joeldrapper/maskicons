@@ -1,5 +1,5 @@
 // Times a Vite production build of each fixture CSS file, each in a fresh process, pinned to one CPU core when
-// `taskset` is available. Run with `bun run build && node test/bench.ts [runs]`.
+// `taskset` is available. Run with `aube run bench [runs]`.
 import { execFileSync, spawnSync } from "node:child_process"
 import * as path from "node:path"
 
