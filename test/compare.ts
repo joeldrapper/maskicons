@@ -1,5 +1,5 @@
 // Compiles the fixture with the last release's CSS files and with the plugin, and checks they produce the same
-// rules. Run with `bun run build && node test/compare.ts`.
+// rules. Run with `aube run test`.
 import { compile } from "@tailwindcss/node"
 import { Scanner } from "@tailwindcss/oxide"
 import * as assert from "node:assert/strict"

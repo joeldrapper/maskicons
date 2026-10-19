@@ -1,10 +1,10 @@
-import { Glob } from "bun"
-import * as path from "path"
-import * as fs from "fs"
+import { execFileSync } from "node:child_process"
+import * as fs from "node:fs"
+import * as path from "node:path"
 import { optimize } from "svgo"
-import { ICON_SETS, type IconSet } from "./sets"
+import { ICON_SETS, type IconSet } from "./sets.ts"
 
-const SRC_DIR = import.meta.dir
+const SRC_DIR = import.meta.dirname
 const ICONS_DIR = path.join(SRC_DIR, "icons")
 const DIST_DIR = path.join(SRC_DIR, "../dist")
 const DATA_DIR = path.join(DIST_DIR, "data")
@@ -34,20 +34,16 @@ function iconNameFromPath(filePath: string, baseDir: string): string {
 	return parts.join("-").toLowerCase()
 }
 
-async function collectSvgFiles(dir: string): Promise<string[]> {
-	const glob = new Glob("**/*.svg")
-	const files: string[] = []
-
-	for await (const file of glob.scan({ cwd: dir, absolute: true })) {
-		files.push(file)
-	}
-
-	return files
+function collectSvgFiles(dir: string): string[] {
+	return fs
+		.readdirSync(dir, { recursive: true, encoding: "utf8" })
+		.filter((file) => file.endsWith(".svg"))
+		.map((file) => path.join(dir, file))
 }
 
 async function buildIconSet(config: IconSet, classNames: Map<string, string>): Promise<number> {
 	const directory = path.join(ICONS_DIR, config.directory)
-	const svgFiles = (await collectSvgFiles(directory)).sort()
+	const svgFiles = collectSvgFiles(directory).sort()
 
 	if (svgFiles.length === 0) {
 		console.log(`No icons found for ${config.name}, skipping...`)
@@ -56,7 +52,7 @@ async function buildIconSet(config: IconSet, classNames: Map<string, string>): P
 
 	const icons = await Promise.all(
 		svgFiles.map(async (filePath) => {
-			const svgContent = await Bun.file(filePath).text()
+			const svgContent = await fs.promises.readFile(filePath, "utf8")
 			const iconName = iconNameFromPath(filePath, directory)
 			return { iconName, dataUri: svgToDataUri(svgContent) }
 		}),
@@ -75,8 +71,8 @@ async function buildIconSet(config: IconSet, classNames: Map<string, string>): P
 		urls.push(url)
 		offset += url.length
 	}
-	await Bun.write(path.join(DATA_DIR, `${config.name}.json`), JSON.stringify(index))
-	await Bun.write(path.join(DATA_DIR, `${config.name}.txt`), Buffer.concat(urls))
+	await fs.promises.writeFile(path.join(DATA_DIR, `${config.name}.json`), JSON.stringify(index))
+	await fs.promises.writeFile(path.join(DATA_DIR, `${config.name}.txt`), Buffer.concat(urls))
 
 	console.log(`Generated ${config.name} with ${svgFiles.length} icons`)
 	return svgFiles.length
@@ -103,14 +99,10 @@ function validatePrefixes(): void {
 }
 
 async function buildPlugin(builtSets: IconSet[]): Promise<void> {
-	const result = await Bun.build({
-		entrypoints: [path.join(SRC_DIR, "plugin.ts")],
-		outdir: DIST_DIR,
-		target: "node",
-		format: "esm",
-		external: ["tailwindcss"],
+	// Compiles src/plugin.ts and src/sets.ts to dist
+	execFileSync(path.join(SRC_DIR, "../node_modules/.bin/tsc"), ["-p", path.join(SRC_DIR, "../tsconfig.build.json")], {
+		stdio: "inherit",
 	})
-	if (!result.success) throw new AggregateError(result.logs, "Failed to build plugin.js")
 
 	const entries: [string, IconSet[], boolean][] = [
 		["index", builtSets, true],
@@ -121,7 +113,7 @@ async function buildPlugin(builtSets: IconSet[]): Promise<void> {
 	for (const [name, sets, iconColor] of entries) {
 		const names = JSON.stringify(sets.map((set) => set.name))
 		const outputFile = path.join(DIST_DIR, `${name}.js`)
-		await Bun.write(outputFile, `import { maskicons } from "./plugin.js"\n\nexport default maskicons(${names}, ${iconColor})\n`)
+		await fs.promises.writeFile(outputFile, `import { maskicons } from "./plugin.js"\n\nexport default maskicons(${names}, ${iconColor})\n`)
 		console.log(`Generated ${outputFile}`)
 	}
 }
