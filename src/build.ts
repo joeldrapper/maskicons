@@ -34,34 +34,6 @@ function iconNameFromPath(filePath: string, baseDir: string): string {
 	return parts.join("-").toLowerCase()
 }
 
-function generateUtility(prefix: string, iconName: string, dataUri: string, config: IconSet): string {
-	const utilityName = [prefix, iconName, config.suffix].filter(Boolean).join("-")
-
-	if (config.colored) {
-		return `@utility ${utilityName} {
-  :where(&) {
-    @apply inline-block overflow-hidden align-[-0.125em] select-none cursor-default;
-    height: 1em;
-    aspect-ratio: ${config.aspectRatio};
-    background: url("${dataUri}") center / contain no-repeat;
-  }
-}
-`
-	}
-
-	return `@utility ${utilityName} {
-  :where(&) {
-    @apply inline-block overflow-hidden align-[-0.125em] select-none cursor-default;
-    height: 1em;
-    aspect-ratio: ${config.aspectRatio};
-    color: var(--icon-color, currentColor);
-    background: var(--icon-color, currentColor);
-    mask: url("${dataUri}") center / contain no-repeat;
-  }
-}
-`
-}
-
 async function collectSvgFiles(dir: string): Promise<string[]> {
 	const glob = new Glob("**/*.svg")
 	const files: string[] = []
@@ -90,8 +62,6 @@ async function buildIconSet(config: IconSet, classNames: Map<string, string>): P
 		}),
 	)
 
-	const utilities = icons.map(({ iconName, dataUri }) => generateUtility(config.prefix, iconName, dataUri, config))
-
 	// Data for the Tailwind plugin: the data URLs, and an index from each utility value (the class name without
 	// the prefix) to the byte offset and length of its URL
 	const index: Record<string, [number, number]> = {}
@@ -108,30 +78,8 @@ async function buildIconSet(config: IconSet, classNames: Map<string, string>): P
 	await Bun.write(path.join(DATA_DIR, `${config.name}.json`), JSON.stringify(index))
 	await Bun.write(path.join(DATA_DIR, `${config.name}.txt`), Buffer.concat(urls))
 
-	const imports = config.colored ? [] : ['@import "./utilities.css";']
-	const output = (imports.length ? imports.join("\n") + "\n\n" : "") + utilities.join("\n")
-	const outputFile = path.join(DIST_DIR, `${config.name}.css`)
-	await Bun.write(outputFile, output)
-
-	console.log(`Generated ${outputFile} with ${svgFiles.length} icons`)
+	console.log(`Generated ${config.name} with ${svgFiles.length} icons`)
 	return svgFiles.length
-}
-
-function generateUtilitiesCSS(): string {
-	return `@utility icon-* {
-  --icon-color: --value(--color-*);
-}
-`
-}
-
-async function generateIndexCSS(iconSetNames: string[]): Promise<void> {
-	const imports = iconSetNames.map((name) => `@import "./${name}.css";`)
-
-	const output = imports.join("\n") + "\n"
-	const outputFile = path.join(DIST_DIR, "index.css")
-	await Bun.write(outputFile, output)
-
-	console.log(`Generated ${outputFile}`)
 }
 
 // The plugin registers one utility per prefix, and Tailwind finds a class's utility by trying each hyphenated
@@ -187,11 +135,6 @@ async function main(): Promise<void> {
 	}
 	fs.mkdirSync(DATA_DIR, { recursive: true })
 
-	// Generate utilities.css
-	const utilitiesFile = path.join(DIST_DIR, "utilities.css")
-	await Bun.write(utilitiesFile, generateUtilitiesCSS())
-	console.log(`Generated ${utilitiesFile}`)
-
 	// Build each icon set
 	const builtSets: IconSet[] = []
 	const classNames = new Map<string, string>()
@@ -204,9 +147,6 @@ async function main(): Promise<void> {
 			totalIcons += iconCount
 		}
 	}
-
-	// Generate index.css that imports all sets
-	await generateIndexCSS(builtSets.map((set) => set.name))
 
 	// Generate the Tailwind plugin and its entry points
 	await buildPlugin(builtSets)

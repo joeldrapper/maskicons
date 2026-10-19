@@ -93,11 +93,11 @@ Any text inside the icon element is visually hidden but remains accessible to sc
 
 The icon utilities use `:where` selectors so they have the lowest precedence. This is why all other utilities such as `size-*` will override the defaults.
 
-## Upgrading from `@import`
+## Upgrading from 0.x
 
-Earlier versions shipped each icon set as a CSS file of `@utility` blocks, used with `@import "maskicons"`. Tailwind has to parse every one of those utilities on every build, which adds seconds to each build even when you only use a few icons. The plugin only generates the icons Tailwind finds in your source, so it adds almost nothing to your build time.
+Version 0.x shipped each icon set as a CSS file of `@utility` blocks, used with `@import "maskicons"`. Tailwind had to parse every one of those utilities on every build, which added seconds to each build even when you only used a few icons. Version 1.0 is a Tailwind plugin instead: it only generates the icons Tailwind finds in your source, so it adds almost nothing to your build time.
 
-To upgrade, replace `@import` with `@plugin`:
+To upgrade, replace each `@import` with `@plugin`:
 
 ```diff
  @import "tailwindcss";
@@ -105,7 +105,7 @@ To upgrade, replace `@import` with `@plugin`:
 +@plugin "maskicons";
 ```
 
-The class names and the CSS they generate are the same. The CSS files still work with `@import` for now, but they are deprecated and will be removed in a future release. Don’t use both `@import` and `@plugin` for the same icons.
+The class names and the CSS they generate are the same.
 
 ## Payload
 

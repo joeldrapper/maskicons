@@ -29,7 +29,7 @@ function readUrl(set: IconSet, [offset, length]: [number, number]): string {
 	return buffer.toString("utf8")
 }
 
-// The same rule as the @utility in the CSS files, with its `@apply inline-block overflow-hidden align-[-0.125em]
+// The same rule as the @utility in the CSS files of maskicons 0.x, with its `@apply inline-block overflow-hidden align-[-0.125em]
 // select-none cursor-default` written out in the order Tailwind expands it
 function iconStyles(set: IconSet, url: string) {
 	const base = {
@@ -72,7 +72,7 @@ function registerIconColor({ matchUtilities, theme }: PluginAPI) {
 	for (const key of flattenColors(theme("colors") ?? {})) values[key] = `--theme(--color-${key})`
 	const known = new Set(Object.values(values))
 
-	// Only theme colours, like the `icon-*` @utility: returning no declarations rejects arbitrary values.
+	// Only theme colours, like the `icon-*` @utility in 0.x: returning no declarations rejects arbitrary values.
 	matchUtilities({ icon: (value) => (known.has(value) ? { "--icon-color": value } : []) }, { values })
 }
 

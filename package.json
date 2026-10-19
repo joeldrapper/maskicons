@@ -1,39 +1,17 @@
 {
 	"name": "maskicons",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"description": "Icons as Tailwind utilities.",
 	"type": "module",
 	"main": "dist/index.js",
-	"style": "dist/index.css",
 	"exports": {
-		".": {
-			"style": "./dist/index.css",
-			"default": "./dist/index.js"
-		},
-		"./utilities": {
-			"style": "./dist/utilities.css",
-			"default": "./dist/utilities.js"
-		},
-		"./tabler-outline": {
-			"style": "./dist/tabler-outline.css",
-			"default": "./dist/tabler-outline.js"
-		},
-		"./tabler-filled": {
-			"style": "./dist/tabler-filled.css",
-			"default": "./dist/tabler-filled.js"
-		},
-		"./bootstrap": {
-			"style": "./dist/bootstrap.css",
-			"default": "./dist/bootstrap.js"
-		},
-		"./flags": {
-			"style": "./dist/flags.css",
-			"default": "./dist/flags.js"
-		},
-		"./flags-square": {
-			"style": "./dist/flags-square.css",
-			"default": "./dist/flags-square.js"
-		}
+		".": "./dist/index.js",
+		"./utilities": "./dist/utilities.js",
+		"./tabler-outline": "./dist/tabler-outline.js",
+		"./tabler-filled": "./dist/tabler-filled.js",
+		"./bootstrap": "./dist/bootstrap.js",
+		"./flags": "./dist/flags.js",
+		"./flags-square": "./dist/flags-square.js"
 	},
 	"files": [
 		"dist",
