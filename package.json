@@ -1,28 +1,35 @@
 {
 	"name": "maskicons",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"description": "Icons as Tailwind utilities.",
 	"type": "module",
-	"main": "dist/index.css",
+	"main": "dist/index.js",
 	"exports": {
-		".": "./dist/index.css",
-		"./utilities": "./dist/utilities.css",
-		"./tabler-outline": "./dist/tabler-outline.css",
-		"./tabler-filled": "./dist/tabler-filled.css",
-		"./bootstrap": "./dist/bootstrap.css",
-		"./flags": "./dist/flags.css",
-		"./flags-square": "./dist/flags-square.css"
+		".": "./dist/index.js",
+		"./utilities": "./dist/utilities.js",
+		"./tabler-outline": "./dist/tabler-outline.js",
+		"./tabler-filled": "./dist/tabler-filled.js",
+		"./bootstrap": "./dist/bootstrap.js",
+		"./flags": "./dist/flags.js",
+		"./flags-square": "./dist/flags-square.js"
 	},
 	"files": [
 		"dist",
 		"licenses"
 	],
 	"scripts": {
-		"build": "bun run src/build.ts"
+		"build": "bun run src/build.ts",
+		"test": "bun run build && node test/compare.ts",
+		"bench": "bun run build && node test/bench.ts"
 	},
 	"devDependencies": {
+		"@tailwindcss/node": "4.3.3",
+		"@tailwindcss/oxide": "4.3.3",
+		"@tailwindcss/vite": "4.3.3",
 		"@types/bun": "^1.3.4",
-		"svgo": "^4.0.0"
+		"maskicons-release": "npm:maskicons@0.1.0",
+		"svgo": "^4.0.0",
+		"vite": "^8.3.4"
 	},
 	"dependencies": {
 		"tailwindcss": "^4.1.17"

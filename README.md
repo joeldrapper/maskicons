@@ -16,22 +16,22 @@ npm install maskicons
 
 ## Usage
 
-Just import the package in your CSS file after `tailwindcss`:
+Add the plugin to your CSS file after `tailwindcss`:
 
 ```css
 @import "tailwindcss";
-@import "maskicons";
+@plugin "maskicons";
 ```
 
-You can alternatively import just the icon sets that you need:
+You can alternatively add just the icon sets that you need:
 
 ```css
 @import "tailwindcss";
-@import "maskicons/tabler-outline";
-@import "maskicons/tabler-filled";
-@import "maskicons/bootstrap";
-@import "maskicons/flags";
-@import "maskicons/flags-square";
+@plugin "maskicons/tabler-outline";
+@plugin "maskicons/tabler-filled";
+@plugin "maskicons/bootstrap";
+@plugin "maskicons/flags";
+@plugin "maskicons/flags-square";
 ```
 
 Then use the CSS classes on `<i>` tags to render icons.
@@ -92,6 +92,20 @@ Any text inside the icon element is visually hidden but remains accessible to sc
 ## Low precedence
 
 The icon utilities use `:where` selectors so they have the lowest precedence. This is why all other utilities such as `size-*` will override the defaults.
+
+## Upgrading from 0.x
+
+Version 0.x shipped each icon set as a CSS file of `@utility` blocks, used with `@import "maskicons"`. Tailwind had to parse every one of those utilities on every build, which added seconds to each build even when you only used a few icons. Version 1.0 is a Tailwind plugin instead: it only generates the icons Tailwind finds in your source, so it adds almost nothing to your build time.
+
+To upgrade, replace each `@import` with `@plugin`:
+
+```diff
+ @import "tailwindcss";
+-@import "maskicons";
++@plugin "maskicons";
+```
+
+The class names and the CSS they generate are the same.
 
 ## Payload
 
